@@ -8,6 +8,8 @@ If the code blocks like following are contained, it should be converted to a Ima
 
 ![Title should be displayed](https://www.plantuml.com/plantuml/png/oyXCILL8pIqegLJ8JSrDIYtYuihCAqajIajCJbK8AKhCAqxBByfDBLAevb800cs54fYOHbv-IggLWcDmY2QOvAe50000)
 
+![test](https://www.plantuml.com/plantuml/png/SoWkIImgAStDuUNYvGf8p5NGjLDmpCbCJhLISCbNACxFJIt9oCnB1yawfEQb01K20000)
+
 ```javascript
 console.log("This code block should be ignored");
 ```

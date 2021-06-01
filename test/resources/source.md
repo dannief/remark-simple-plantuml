@@ -20,6 +20,8 @@ interface Transformer {
 }
 ```
 
+![test](test/resources/test.puml)
+
 ```javascript
 console.log("This code block should be ignored");
 ```

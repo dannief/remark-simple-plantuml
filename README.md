@@ -16,6 +16,8 @@ You can use this plugin like following
 
 ### Markdown
 
+#### Inline Code
+
 ````markdown
 # Your markdown including PlantUML code block
 
@@ -26,6 +28,14 @@ class SimplePlantUMLPlugin {
 ```
 ````
 
+#### Reference External File
+
+```markdown
+# Your markdown including PlantUML file
+
+![Your title](path/to/file.puml)
+```
+
 ### JavaScript
 
 ```javascript
@@ -35,10 +45,13 @@ const fs = require("fs");
 const path = require("path");
 
 const input = fs.readFileSync(path.resolve(__dirname, "./your-markdown.md")).toString();
-const output = remark().use(simplePlantUML).processSync(input).toString();
+const output = remark()
+  .use(simplePlantUML)
+  .processSync(input)
+  .toString();
 
 console.log(output);
-// will be 
+// will be
 // > # Your markdown including PlantUML code block
 // >
 // > ![Your title](https://www.plantuml.com/plantuml/png/Iyv9B2vM2CxCBSX93SX9p2i9zVK9o2bDpynJgEPI009jXPAYnBpYjFoYN8tYohoIn8gGejHKAmN7u11DCCbL2m00)
@@ -52,7 +65,9 @@ You can use specific PlantUML server by the option 'baseUrl'.
 If you want to use SVG, you can configure like following.
 
 ```javascript
-remark().use(simplePlantUML, { baseUrl: "https://www.plantuml.com/plantuml/svg" }).processSync(input);
+remark()
+  .use(simplePlantUML, { baseUrl: "https://www.plantuml.com/plantuml/svg" })
+  .processSync(input);
 ```
 
 ## Integration
@@ -72,7 +87,7 @@ presets: [
       {
         docs: {
           sidebarPath: require.resolve("./sidebars.js"),
-          remarkPlugins: [simplePlantUML]
+          beforeDefaultRemarkPlugins: [simplePlantUML]
         }
       }
     ]
@@ -80,3 +95,29 @@ presets: [
 
 //...
 ```
+
+Or to specify a baseUrl:
+
+```javascript
+const simplePlantUML = require("@akebifiky/remark-simple-plantuml");
+
+// your configurations...
+
+presets: [
+    [
+     //...
+      {
+        docs: {
+          // ...
+          beforeDefaultRemarkPlugins: [
+            [beforeDefaultRemarkPlugins, { baseUrl: "https://www.plantuml.com/plantuml/svg" }]
+          ]
+        }
+      }
+    ]
+  ],
+
+//...
+```
+
+> Note: _beforeDefaultRemarkPlugins_ must be used if including an external file. Plugins added via _remarkPlugins_ are executed after Docusaurus 2 transforms markdown image nodes to JSX `<img>` tags and loads their source with a webpack loader. The plugin will not be able to transform the included PlantUML after this point.
