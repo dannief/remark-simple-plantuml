@@ -17,12 +17,24 @@ describe("Plugin", () => {
     chai.assert.equal(output, sanitized(expected));
   });
 
-  it("should convert PlantUML code to the Image nodes which endpoint specified", () => {
+  it("should convert PlantUML code to the Object nodes when svg endpoint specified", () => {
     const input = fs.readFileSync(path.resolve(__dirname, "./resources/source.md")).toString();
     const expected = fs.readFileSync(path.resolve(__dirname, "./resources/expected.svg.md")).toString();
 
     const output = remark()
       .use(plugin, { baseUrl: "https://www.plantuml.com/plantuml/svg/" })
+      .processSync(input)
+      .toString();
+
+    chai.assert.equal(output, sanitized(expected));
+  });
+
+  it("should convert PlantUML code to the Object nodes when txt endpoint specified", () => {
+    const input = fs.readFileSync(path.resolve(__dirname, "./resources/source.md")).toString();
+    const expected = fs.readFileSync(path.resolve(__dirname, "./resources/expected.txt.md")).toString();
+
+    const output = remark()
+      .use(plugin, { baseUrl: "https://www.plantuml.com/plantuml/txt/" })
       .processSync(input)
       .toString();
 
