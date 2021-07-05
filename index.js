@@ -1,6 +1,7 @@
 const visit = require("unist-util-visit");
 const plantumlEncoder = require("plantuml-encoder");
 const fs = require("fs");
+const fetch = require("node-fetch");
 
 const DEFAULT_OPTIONS = {
   baseUrl: "https://www.plantuml.com/plantuml/png"
@@ -11,6 +12,14 @@ function createObjectNode(node, url) {
   const obj = {
     type: "html",
     value: `<object data="${url}"${titleAttr}></object>`
+  };
+  return Object.assign(node, obj);
+}
+
+function createSvgNode(node, value) {
+  const obj = {
+    type: "html",
+    value
   };
   return Object.assign(node, obj);
 }
@@ -46,7 +55,9 @@ function remarkSimplePlantumlPlugin(pluginOptions) {
     return baseUrl.substring(baseUrl.lastIndexOf("/") + 1);
   }
 
-  return function transformer(syntaxTree, file) {
+  return async function transformer(syntaxTree, file) {
+    const promises = [];
+
     visit(syntaxTree, "code", node => {
       let { lang, value } = node;
       if (!lang || !value || lang !== "plantuml") return;
@@ -55,6 +66,12 @@ function remarkSimplePlantumlPlugin(pluginOptions) {
 
       if (getOutputType() === "png") {
         createImageNode(node, url);
+      } else if (getOutputType() === "svg") {
+        const promise = fetch(url)
+          .then(response => response.text())
+          .then(svg => createSvgNode(node, svg))
+          .catch(() => {});
+        promises.push(promise);
       } else {
         return createObjectNode(node, url);
       }
@@ -69,6 +86,8 @@ function remarkSimplePlantumlPlugin(pluginOptions) {
       const value = fs.readFileSync(filePath, { encoding: "utf8" });
       node.url = encode(value);
     });
+
+    await Promise.all(promises);
 
     return syntaxTree;
   };

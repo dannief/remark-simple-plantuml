@@ -33,6 +33,7 @@
     "remark": "^11.0.2"
   },
   "dependencies": {
+    "node-fetch": "^2.6.1",
     "plantuml-encoder": "^1.4.0",
     "unist-util-visit": "^2.0.2"
   },
